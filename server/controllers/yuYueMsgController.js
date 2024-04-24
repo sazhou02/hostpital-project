@@ -44,7 +44,6 @@ let yuYueMsg = async (req, res) => {
 
 let insertyuYueMsg = async (req, res) => {
   try {
-    console.log(req.body);
     let keshi = req.body.keshi;
     let doctor = req.body.doctor;
     let day = req.body.day;
@@ -54,6 +53,19 @@ let insertyuYueMsg = async (req, res) => {
     let petname = req.body.petname;
     let phone = req.body.phone;
     let doctorId = req.body.doctorId;
+    const selectYuYueSql = "select doctor,yuYueTime,daytime,time_duan from yuyuemsg where doctor_id = ? and daytime = ? and time_duan = ? and yuYueTime = ?";
+    const selectYuYueParams = [doctorId, daytime, time, day];
+    const { results: data } = await db.exec(selectYuYueSql, selectYuYueParams);
+    const selectGuaHaoSql = "select doctor,guahaoTime,daytime,time_duan from guahaomsg where doctor_id = ? and daytime = ? and time_duan = ? and guahaoTime = ?";
+    const selectGuaHaoParams = [doctorId, daytime, time, day];
+    const { results: data1 } = await db.exec(selectGuaHaoSql, selectGuaHaoParams);
+    if (data.length > 0 || data1.length > 0) {
+      res.json({
+        status: 200,
+        msg: `${data[0]?.doctor || data1[0].doctor}医生${data[0]?.yuYueTime || data1[0].guahaoTime}号${data[0]?.daytime || data1[0].daytime}的${data[0]?.time_duan || data1[0].time_duan}时间段已被预约或已被挂号，请选择其他时间段或其他医生！`
+      });
+      return ;
+    }
     
     let sql = "insert into yuYueMsg (petname, petuser, phone, keshi, doctor, yuYueTime, daytime, time_duan, doctor_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     let params = [petname, username, phone, keshi, doctor, day, daytime, time, doctorId];

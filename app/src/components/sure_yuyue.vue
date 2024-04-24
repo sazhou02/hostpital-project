@@ -33,7 +33,8 @@
 <script>
 	import Vue from 'vue';
 	import {
-		Toast
+		Toast,
+		Dialog
 	} from 'vant';
 	
 	Vue.use(Toast);
@@ -131,13 +132,18 @@
 						console.log(da);
 						
 						let {data:res}= await this.$http.post('yuYue/insertyuYueMsg',da)
-						console.log(res)
-						
-						if(res.status==200){
+						if (res.status === 200 && res.msg === "预约成功") {
 							Toast(`预约成功`);
 							// 成功预约返回首页
 							this.$router.push('/mycenter')
+						} else {
+							Dialog.alert({
+								message: res.msg
+							}).then(() => {
+								// on close
+							});
 						}
+						
 					}
 				}
 				
