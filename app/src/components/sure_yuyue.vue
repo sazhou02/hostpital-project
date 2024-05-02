@@ -21,7 +21,7 @@
 				<van-calendar v-model="show" @confirm="onConfirm" />
 			</div>
 			<div>
-				<van-picker show-toolbar title="选择预约时间段" :columns="columns" @confirm="onfirm"/>
+				<van-picker show-toolbar title="选择预约时间段" :columns="columns" @change="onChange" @confirm="onfirm"/>
 			</div>
 
 		</div>
@@ -38,6 +38,11 @@
 	} from 'vant';
 	
 	Vue.use(Toast);
+
+	const times = {
+		"上午": ["8:00-9:00", "9:00-10:00", "10:00-11:00", "11:00-12:00"],
+		"下午": ["14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00"]
+	}
 	export default {
 		data() {
 			return {
@@ -54,12 +59,12 @@
 				        // 第一列
 				        {
 				          values: ['上午', '下午'],
-				          defaultIndex: 2,
+				          defaultIndex: 0,
 				        },
 				        // 第二列
 				        {
-				          values: ["8:00-9:00","9:00-10:00","10:00-11:00","11:00-12:00","14:00-15:00","15:00-16:00","16:00-17:00","17:00-18:00"],
-				          defaultIndex: 1,
+				          values: ["8:00-9:00", "9:00-10:00", "10:00-11:00", "11:00-12:00"],
+				          defaultIndex: 0,
 				        },
 				      ],
 				form:{},
@@ -76,6 +81,13 @@
 			this.doctorId=window.sessionStorage.getItem('doctorId')
 		},
 		methods: {
+			onChange(picker, values) {
+				const times = {
+					"上午": ["8:00-9:00", "9:00-10:00", "10:00-11:00", "11:00-12:00"],
+					"下午": ["14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00"]
+				}
+				picker.setColumnValues(1, times[values[0]]);
+			},
 			onClickLeft() {
 				history.back()
 			},
@@ -123,13 +135,13 @@
 				// 判断是否设置病人信息
 				let {data:res1}=await this.$http.get('/dangAn/getPetMsg?petusername='+this.username)
 				console.log(res1,".....")
-				if(res1.status==200){
-					if(res1.data[0].petname==null){
+				if(res1.status===200){
+					if(res1.data.length===0){
 						Toast("请先去个人中心添加病人信息")
 					}
 					else{
+						form.petname = res1.data[0].petname
 						let da=this.$qs.stringify(form)
-						console.log(da);
 						
 						let {data:res}= await this.$http.post('yuYue/insertyuYueMsg',da)
 						if (res.status === 200 && res.msg === "预约成功") {

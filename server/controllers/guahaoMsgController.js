@@ -61,7 +61,7 @@ let insertGuahaoMsg = async (req, res) => {
     const selectGuaHaoSql = "select doctor,guahaoTime,daytime,time_duan from guahaomsg where doctor_id = ? and daytime = ? and time_duan = ? and guahaoTime = ?";
     const selectGuaHaoParams = [doctorId, daytime, time, day];
     const { results: guaHaoData } = await db.exec(selectGuaHaoSql, selectGuaHaoParams);
-    if (yuYueData.length > 0 || data1.length > 0) {
+    if (yuYueData.length > 0 || guaHaoData.length > 0) {
       res.json({
         status: 200,
         msg: `${yuYueData[0]?.doctor || guaHaoData[0].doctor}医生${yuYueData[0]?.yuYueTime || guaHaoData[0].guahaoTime}号${yuYueData[0]?.daytime || guaHaoData[0].daytime}的${yuYueData[0]?.time_duan || guaHaoData[0].time_duan}时间段已被预约或已被挂号，请选择其他时间段或其他医生！`

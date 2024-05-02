@@ -128,10 +128,20 @@ let postPetMsg = async (req, res) => {
 			const { results } = await db.exec(sql, params);
 
 			if (results.affectedRows == 0) {
-					res.json({
-							status: 404,
-							msg: '更新失败，宠物信息不存在'
-					});
+					// res.json({
+					// 		status: 404,
+					// 		msg: '更新失败，宠物信息不存在'
+					// });
+					const insertSql = "INSERT INTO dangAnMsg(petname, petusername, phone, history) VALUES(?,?,?,?)";
+					const insertParams = [petname, petusername, phone, history];
+					const { results: data } = await db.exec(insertSql, insertParams);
+					
+					if (data.affectedRows > 0) {
+							res.json({
+									status: 200,
+									msg: '添加成功'
+							});
+					}
 			} else {
 					res.json({
 							status: 200,

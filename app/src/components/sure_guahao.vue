@@ -21,7 +21,7 @@
 				<van-calendar v-model="show" @confirm="onConfirm" />
 			</div>
 			<div>
-				<van-picker show-toolbar title="选择挂号时间段" :columns="columns" @confirm="onfirm"/>
+				<van-picker show-toolbar title="选择挂号时间段" :columns="columns" @change="onChange" @confirm="onfirm"/>
 			</div>
 
 		</div>
@@ -52,12 +52,12 @@
 				        // 第一列
 				        {
 				          values: ['上午', '下午'],
-				          defaultIndex: 2,
+				          defaultIndex: 0,
 				        },
 				        // 第二列
 				        {
-				          values: ["8:00-9:00","9:00-10:00","10:00-11:00","11:00-12:00","14:00-15:00","15:00-16:00","16:00-17:00","17:00-18:00"],
-				          defaultIndex: 1,
+				          values: ["8:00-9:00", "9:00-10:00", "10:00-11:00", "11:00-12:00"],
+				          defaultIndex: 0,
 				        },
 				      ],
 				form:{},
@@ -76,6 +76,13 @@
 			
 		},
 		methods: {
+			onChange(picker, values) {
+				const times = {
+					"上午": ["8:00-9:00", "9:00-10:00", "10:00-11:00", "11:00-12:00"],
+					"下午": ["14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00"]
+				}
+				picker.setColumnValues(1, times[values[0]]);
+			},
 			onClickLeft() {
 				history.back()
 			},
